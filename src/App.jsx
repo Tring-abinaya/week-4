@@ -16,7 +16,7 @@ function App() {
       }
     )
   }
-  console.log(inputFields)
+
   const showInputContainer = () => {
     setIsAdd(true);
   }
@@ -53,13 +53,16 @@ function App() {
     setEditData({ id: index + 1, ...value })
   }
 
-  const deleteDetails=(index)=>{
-    console.log("index:",index)
-    const newDetails=details.filter((_,i) => i !==index);
-    setDetails(newDetails);
+  const deleteDetails = (index) => {
+    const confirmDelete = window.confirm("Are you sure want to delete this item?");
+    
+    if (confirmDelete) {
+      const newDetails = details.filter((_,i) => i!==index);
+      setDetails(newDetails);
+    }
   }
+  
 
-  console.log("Edit data ", editData)
   return (
     <>
       <div className="heading">
@@ -105,8 +108,6 @@ function App() {
       {
         isSave &&
         <div className='display'>
-          {console.log("inputFields ", inputFields)}
-          {console.log("details ", details)}
           <table>
             <tbody>
               <tr>
