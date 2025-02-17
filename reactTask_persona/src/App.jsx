@@ -4,6 +4,7 @@ import Home from './Home.jsx';
 import Signin from './Signin.jsx';
 import Signup from './Signup.jsx';
 import Persona from './Persona.jsx';
+import SavePersona from "./SavePersona.jsx";
 
 function App() {
 
@@ -15,7 +16,8 @@ function App() {
           <Route path='/' element={<Home />} />
           <Route path='/Signin' element={<Signin />} />
           <Route path='/Signup' element={<Signup />} />
-          <Route path='/Persona' element={<Persona />} />
+          <Route path='/Persona/:id' element={<Persona />} />
+          <Route path='/Persona/:id/Save' element={<SavePersona />} />
         </Routes>
       </BrowserRouter>
     </>

@@ -11,6 +11,7 @@ function Signin() {
     const [passwordVisible, setPasswordVisible] = useState(false);
     const navigate = useNavigate();
     const [isInvalid, setIsInvalid] = useState(false)
+    const [isUsers, setIsUsers] = useState(true)
 
     const signin = (values) => {
 
@@ -19,7 +20,7 @@ function Signin() {
         const itemsArray = JSON.parse(items)
 
         if (itemsArray == null) {
-            alert("Users not found")
+            setIsUsers(false)
             reset()
         }
         else {
@@ -28,12 +29,17 @@ function Signin() {
 
             if (!(found == undefined)) {
                 if (values.email === found.email && values.password === found.password) {
-                    setIsInvalid(false)
-                    navigate('/')
+
+                    navigate(`/Persona/${found.id}`)
+                }
+                else {
+                    setIsInvalid(true);
                 }
             }
+
             else {
                 setIsInvalid(true);
+
             }
         }
 
@@ -58,6 +64,9 @@ function Signin() {
             <div className="signin-containter">
 
                 <h1>Sign In</h1>
+
+
+
                 <form onSubmit={handleSubmit(signin)}>
 
                     <input
@@ -96,6 +105,9 @@ function Signin() {
 
             {isInvalid &&
                 <span className='invalidUser'>Invalid email or password</span>
+            }
+            {!isUsers &&
+                <span className='usersNotFound'>Users not found</span>
             }
 
         </>

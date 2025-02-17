@@ -54,7 +54,7 @@ input:focus
     margin-left:100px;
     margin-top:5px;
 }
-.invalidUser
+.invalidUser,.usersNotFound
 {
     display: block;
     color:red;

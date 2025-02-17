@@ -18,24 +18,28 @@ function Signup() {
 
         const items = localStorage.getItem('users')
         const itemsArray = JSON.parse(items)
-
-        const found = itemsArray.find(item => values.email === item.email)
-
-        if (!(found == undefined)) {
-            if (values.email === found.email) {
-                setIsUserExist(true)
-                reset()
+        console.log("itemsArray:",itemsArray)
+        if(itemsArray!==null)
+        {
+            const found = itemsArray.find(item => values.email === item.email)
+    
+            if (!(found == undefined)) {
+                if (values.email === found.email) {
+                    setIsUserExist(true)
+                    reset()
+                }
+                return
             }
-            return
+            else {
+                let length = itemsArray.length
+                details = [...itemsArray, { id: length + 1, ...values,personas:[] }]
+            }
+    
         }
-        else if (itemsArray == null) {
-            details = [{ id: 1, ...values }]
+        else if (itemsArray === null) {
+            details = [{ id: 1, ...values,personas:[] }]
         }
-        else {
-            let length = itemsArray.length
-            details = [...itemsArray, { id: length + 1, ...values }]
-        }
-
+        
         localStorage.setItem("users", JSON.stringify(details))
 
         navigate('/Signin')
