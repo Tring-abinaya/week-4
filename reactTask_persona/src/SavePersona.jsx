@@ -2,10 +2,10 @@
 import './SavePersona.css'
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
-import {useState} from 'react';
+import {useEffect, useState} from 'react';
 import { useParams } from 'react-router-dom'; 
 import { useNavigate } from 'react-router-dom';
-
+import image from './assets/image.png';
 
 function SavePersona() {
     const navigate=useNavigate();
@@ -20,23 +20,42 @@ function SavePersona() {
         painPoints: "",
         jobNeeds: "",
         activities: "",
-        image:null
+        image:"image"
       });
-    const {id}=useParams();
+    const {id,cid}=useParams();
+
+      useEffect(()=>{
+        const items = localStorage.getItem('users')
+        const itemsArray = JSON.parse(items)       
+        const foundIndex = itemsArray.findIndex(item =>item.id==id)
+        if(itemsArray[foundIndex].personas.length!=0)
+        {
+        setCardInfo(itemsArray[foundIndex].personas[cid]);
+        console.log("effect",itemsArray[foundIndex].personas[cid]);
+        }
+      },[cid])
+useEffect(()=>{
+    console.log("cardddd",cardInfo.name);
+    
+},[cardInfo]);      
+    
 
     const handleImageChange = (e) => {
         const file = e.target.files[0];
         if (file) {
             const readImage = new FileReader();
             readImage.onloadend = () => {
-                console.log("Image:",URL.createObjectURL(file))
+                
                 setImage(readImage.result)
+                setCardInfo({...cardInfo,image:readImage.result})
                 setShow(false);
+                console.log("Image:",readImage.result)
             }
             readImage.readAsDataURL(file);
+            
         }
         console.log("Before add image in cardinfo:",cardInfo)
-        setCardInfo({...cardInfo,image:URL.createObjectURL(file)})
+        
         
     }
     console.log("After add image in cardinfo:",cardInfo)
@@ -67,24 +86,23 @@ function SavePersona() {
         if (foundIndex !== -1) {
             console.log("cardInfo:",cardInfo)
             console.log("ItemsArray:",itemsArray)
-            itemsArray[foundIndex].personas.push(cardInfo)
-            console.log("ItemsArray after push :",itemsArray)
-
-            // localStorage.setItem('users', JSON.stringify(itemsArray));
+            itemsArray[foundIndex].personas[cid]=cardInfo
+            localStorage.setItem('users', JSON.stringify(itemsArray));
             // console.log("Updated item:", itemsArray[foundIndex]);
-            navigate(`./Persona/${id}`)
+            navigate(`/Persona/${id}`)
         }
 
     }
 
     return (
         <>
-            <img src={image}></img>
+            <img src={cardInfo.image}></img>
             <div className='editNameImage'>
                 <div>
                     <label style={{ fontSize: "20px" }}>Name:</label>
                     <input type="text" 
                     name="name"
+                    value={cardInfo.name}
                     onChange={handleChange}
                     />
                 </div>
@@ -103,9 +121,11 @@ function SavePersona() {
                     <h4>Notable Quote</h4>
                     <textarea 
                     name="quote" 
+                    value={cardInfo.quote}
                     placeholder='Enter a quote that identifies the persona' 
                     rows={10} 
                     cols={65} 
+                    
                     style={{ resize: "none" }} 
                     onChange={handleChange}
                     />
@@ -116,6 +136,7 @@ function SavePersona() {
                     <textarea
                         name="description"
                         placeholder='Enter a general description/bio about the persona'
+                        value={cardInfo.description}
                         rows={10}
                         cols={65}
                         style={{ resize: "none" }}
@@ -128,6 +149,7 @@ function SavePersona() {
                     <textarea 
                     name="motivations" 
                     placeholder='What mindset does persona have?' 
+                    value={cardInfo.motivations}
                     rows={10} 
                     cols={65} 
                     style={{ resize: "none" }}
@@ -142,6 +164,7 @@ function SavePersona() {
                     <ReactQuill 
                     theme="snow" 
                     name="painPoints"
+                    value={cardInfo.painPoints}
                     onChange={(e)=>handleRichTextChange(e,"painPoints")}
                     />
                 </div>
@@ -150,6 +173,7 @@ function SavePersona() {
                     <ReactQuill 
                     theme="snow" 
                     name="jobNeeds"
+                    value={cardInfo.jobNeeds}
                     onChange={(e)=>handleRichTextChange(e,"jobNeeds")}
                     />
                 </div>
@@ -158,6 +182,7 @@ function SavePersona() {
                     <ReactQuill 
                     theme="snow" 
                     name="activities"
+                    value={cardInfo.activities}
                     onChange={(e)=>handleRichTextChange(e,"activities")}
                     />
                 </div>
