@@ -18,7 +18,6 @@ function Signup() {
 
         const items = localStorage.getItem('users')
         const itemsArray = JSON.parse(items)
-        console.log("itemsArray:",itemsArray)
         if(itemsArray!==null)
         {
             const found = itemsArray.find(item => values.email === item.email)

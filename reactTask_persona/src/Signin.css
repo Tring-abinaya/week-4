@@ -41,7 +41,6 @@ input:focus
     color:white;
 }
 .password-eye-icon {
-    /* position: absolute; */
     right: 580px; 
     top: 30px;    
     cursor: pointer;

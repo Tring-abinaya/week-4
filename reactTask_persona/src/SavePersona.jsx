@@ -2,94 +2,88 @@
 import './SavePersona.css'
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
-import {useEffect, useState} from 'react';
-import { useParams } from 'react-router-dom'; 
+import { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
-import image from './assets/image.png';
+import image1 from './assets/image.png';
+// import Persona from './Persona';
 
 function SavePersona() {
-    const navigate=useNavigate();
+    const navigate = useNavigate();
     const [show, setShow] = useState(false);
     const [image, setImage] = useState(null);
     const handleShow = () => setShow(true);
-    const [cardInfo,setCardInfo]=useState({
-        name:"",
+    const [cardInfo, setCardInfo] = useState({
+        name: "",
         quote: "",
         description: "",
         motivations: "",
         painPoints: "",
         jobNeeds: "",
         activities: "",
-        image:"image"
-      });
-    const {id,cid}=useParams();
+        image: image1
+    });
+    const { id, cid } = useParams();
 
-      useEffect(()=>{
+    useEffect(() => {
         const items = localStorage.getItem('users')
-        const itemsArray = JSON.parse(items)       
-        const foundIndex = itemsArray.findIndex(item =>item.id==id)
-        if(itemsArray[foundIndex].personas.length!=0)
-        {
-        setCardInfo(itemsArray[foundIndex].personas[cid]);
-        console.log("effect",itemsArray[foundIndex].personas[cid]);
+        const itemsArray = JSON.parse(items)
+      
+        const foundIndex = itemsArray.findIndex(item => item.id == id)
+        
+        if (itemsArray[foundIndex].personas.length > cid) {
+            setCardInfo(itemsArray[foundIndex].personas[cid]);
         }
-      },[cid])
-useEffect(()=>{
-    console.log("cardddd",cardInfo.name);
-    
-},[cardInfo]);      
-    
+    }, [cid, navigate])
+   
+   const handleClose=()=>{
+    navigate(-1);
+   };
 
     const handleImageChange = (e) => {
         const file = e.target.files[0];
         if (file) {
             const readImage = new FileReader();
             readImage.onloadend = () => {
-                
+
                 setImage(readImage.result)
-                setCardInfo({...cardInfo,image:readImage.result})
+                setCardInfo({ ...cardInfo, image: readImage.result })
                 setShow(false);
-                console.log("Image:",readImage.result)
             }
             readImage.readAsDataURL(file);
-            
+
         }
-        console.log("Before add image in cardinfo:",cardInfo)
-        
-        
-    }
-    console.log("After add image in cardinfo:",cardInfo)
-    const handleChange=(e)=>{
-        console.log("event:",e)
-        setCardInfo({...cardInfo,[e.target.name]:e.target.value})
     }
 
-    const handleRichTextChange=(e,richTextName)=>{
-        console.log("event:",e,"richtextname:",richTextName,[richTextName])
-        setCardInfo({...cardInfo,[richTextName]:e})
+    const handleChange = (e) => {
+        setCardInfo({ ...cardInfo, [e.target.name]: e.target.value })
     }
 
-    console.log("cardInfo before update:",cardInfo)
-    const handleUpdate=()=>{
+    const handleDelete=()=>{
+        const isConfirmed = window.confirm("Are you sure you want to delete this item?");
+        if(isConfirmed){
+            const items = localStorage.getItem('users')
+            let itemsArray = JSON.parse(items)
+            const foundIndex = itemsArray.findIndex(item => item.id == id)
+            itemsArray[foundIndex].personas.splice(cid, 1);
+            localStorage.setItem('users', JSON.stringify(itemsArray));
+            navigate(-1);
+        }
+    }
 
+    const handleRichTextChange = (e, richTextName) => {
+        setCardInfo({ ...cardInfo, [richTextName]: e })
+    }
+
+    const handleUpdate = () => {
 
         const items = localStorage.getItem('users')
-        console.log("Items getItem:",items)
-
         const itemsArray = JSON.parse(items)
-        console.log("ItemsArray after parse:",itemsArray)        
-
-        const foundIndex = itemsArray.findIndex(item =>item.id==id)
-
-        console.log("Found detail:",foundIndex)
-
+        const foundIndex = itemsArray.findIndex(item => item.id == id)
         if (foundIndex !== -1) {
-            console.log("cardInfo:",cardInfo)
-            console.log("ItemsArray:",itemsArray)
-            itemsArray[foundIndex].personas[cid]=cardInfo
+            itemsArray[foundIndex].personas[cid] = cardInfo
             localStorage.setItem('users', JSON.stringify(itemsArray));
-            // console.log("Updated item:", itemsArray[foundIndex]);
-            navigate(`/Persona/${id}`)
+            navigate(-1);
         }
 
     }
@@ -100,10 +94,10 @@ useEffect(()=>{
             <div className='editNameImage'>
                 <div>
                     <label style={{ fontSize: "20px" }}>Name:</label>
-                    <input type="text" 
-                    name="name"
-                    value={cardInfo.name}
-                    onChange={handleChange}
+                    <input type="text"
+                        name="name"
+                        value={cardInfo.name}
+                        onChange={handleChange}
                     />
                 </div>
                 <div>
@@ -112,22 +106,22 @@ useEffect(()=>{
             </div>
 
             {show &&
-                <input type="file" accept="image/*" onChange={handleImageChange} style={{marginLeft:"500px"}}></input>
+                <input type="file" accept="image/*" onChange={handleImageChange} style={{ marginLeft: "500px" }}></input>
             }
 
             <div className='textArea'>
                 <div>
 
                     <h4>Notable Quote</h4>
-                    <textarea 
-                    name="quote" 
-                    value={cardInfo.quote}
-                    placeholder='Enter a quote that identifies the persona' 
-                    rows={10} 
-                    cols={65} 
-                    
-                    style={{ resize: "none" }} 
-                    onChange={handleChange}
+                    <textarea
+                        name="quote"
+                        value={cardInfo.quote}
+                        placeholder='Enter a quote that identifies the persona'
+                        rows={10}
+                        cols={65}
+
+                        style={{ resize: "none" }}
+                        onChange={handleChange}
                     />
                 </div>
                 <div>
@@ -146,14 +140,14 @@ useEffect(()=>{
                 <div>
 
                     <h4>Attitudes/Motivations</h4>
-                    <textarea 
-                    name="motivations" 
-                    placeholder='What mindset does persona have?' 
-                    value={cardInfo.motivations}
-                    rows={10} 
-                    cols={65} 
-                    style={{ resize: "none" }}
-                    onChange={handleChange}
+                    <textarea
+                        name="motivations"
+                        placeholder='What mindset does persona have?'
+                        value={cardInfo.motivations}
+                        rows={10}
+                        cols={65}
+                        style={{ resize: "none" }}
+                        onChange={handleChange}
                     />
                 </div>
             </div>
@@ -161,37 +155,37 @@ useEffect(()=>{
             <div className='richText'>
                 <div>
                     <h4>Pain Points</h4>
-                    <ReactQuill 
-                    theme="snow" 
-                    name="painPoints"
-                    value={cardInfo.painPoints}
-                    onChange={(e)=>handleRichTextChange(e,"painPoints")}
+                    <ReactQuill
+                        theme="snow"
+                        name="painPoints"
+                        value={cardInfo.painPoints}
+                        onChange={(e) => handleRichTextChange(e, "painPoints")}
                     />
                 </div>
                 <div>
                     <h4>Jobs/Needs</h4>
-                    <ReactQuill 
-                    theme="snow" 
-                    name="jobNeeds"
-                    value={cardInfo.jobNeeds}
-                    onChange={(e)=>handleRichTextChange(e,"jobNeeds")}
+                    <ReactQuill
+                        theme="snow"
+                        name="jobNeeds"
+                        value={cardInfo.jobNeeds}
+                        onChange={(e) => handleRichTextChange(e, "jobNeeds")}
                     />
                 </div>
                 <div>
                     <h4>Activites</h4>
-                    <ReactQuill 
-                    theme="snow" 
-                    name="activities"
-                    value={cardInfo.activities}
-                    onChange={(e)=>handleRichTextChange(e,"activities")}
+                    <ReactQuill
+                        theme="snow"
+                        name="activities"
+                        value={cardInfo.activities}
+                        onChange={(e) => handleRichTextChange(e, "activities")}
                     />
                 </div>
             </div>
 
             <div className='btns'>
-                <div className='deleteBtn'>DELETE</div>
+                <p className='deleteBtn' onClick={handleDelete}>DELETE</p>
                 <div>
-                    <button className='updateBtn'>Close</button>
+                    <button className='updateBtn' onClick={handleClose} >Close</button>
                     <button className='updateBtn' onClick={handleUpdate}>Update Persona</button>
                 </div>
             </div>
